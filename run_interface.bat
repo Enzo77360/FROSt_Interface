@@ -1,0 +1,1 @@
+python "C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis\codespy\Gui\interface_gui.py"

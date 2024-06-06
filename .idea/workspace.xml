@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a37d3ecc-9e53-4899-b974-ef920bb2b563" name="Changes" comment="big picture (start end step size">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codespy/Gui/Methods_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/MotorCodes/Gui/Methods_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codespy/Gui/interface_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/MotorCodes/Gui/interface_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codespy/MvtTerminal/MvtMoteurContinu.py" beforeDir="false" afterPath="$PROJECT_DIR$/MotorCodes/MvtTerminal/MvtMoteurContinu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codespy/MvtTerminal/MvtMoteurPas_Pas.py" beforeDir="false" afterPath="$PROJECT_DIR$/MotorCodes/MvtTerminal/MvtMoteurPas_Pas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ControleVitesse.py" beforeDir="false" afterPath="$PROJECT_DIR$/MotorCodes/tests/ControleVitesse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/PremierControle.py" beforeDir="false" afterPath="$PROJECT_DIR$/MotorCodes/tests/PremierControle.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Enzo77360&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Enzo77360/MoteurThorlabsKinesis.git&quot;,
+    &quot;accountId&quot;: &quot;0714b27e-dd65-4e9b-bd42-5a2a02ac1947&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/PremierControle.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2gn6nmQWrVN8WSPeiqo8geb8qS1" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.Cmd+vitesse.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ControleVitesse.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Gui_periodic_plot.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Methods_gui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MvtMoteurContinu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MvtMoteurPas_Pas.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PremierControle.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Vitesse.executor&quot;: &quot;Run&quot;,
+    &quot;Python.essais.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interface_gui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.spectro.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/enzos/PycharmProjects/MoteurThorlabsKinesis&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis\MotorCodes" />
+      <recent name="C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis\mozza_python_stuffs\libmozza" />
+      <recent name="C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis" />
+      <recent name="C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis\mozza_python_stuffs" />
+      <recent name="C:\Users\enzos\PycharmProjects\MoteurThorlabsKinesis\codespy\Gui" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-PY-241.15989.155" />
+        <option value="bundled-python-sdk-babbdf50b680-7c6932dee5e4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.15989.155" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a37d3ecc-9e53-4899-b974-ef920bb2b563" name="Changes" comment="" />
+      <created>1716321163430</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1716321163430</updated>
+      <workItem from="1716321164778" duration="3350000" />
+      <workItem from="1716387858976" duration="3388000" />
+      <workItem from="1716392446836" duration="18975000" />
+      <workItem from="1716483965708" duration="7846000" />
+      <workItem from="1717609682847" duration="949000" />
+      <workItem from="1717615611406" duration="2010000" />
+      <workItem from="1717678183012" duration="3166000" />
+    </task>
+    <task id="LOCAL-00001" summary="Visee d'une position">
+      <option name="closed" value="true" />
+      <created>1716323084809</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1716323084809</updated>
+    </task>
+    <task id="LOCAL-00002" summary="avance par pas de 1 toutes les 3sec">
+      <option name="closed" value="true" />
+      <created>1716323740144</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1716323740144</updated>
+    </task>
+    <task id="LOCAL-00003" summary="ajout de commande par utilisateur">
+      <option name="closed" value="true" />
+      <created>1716391084411</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1716391084411</updated>
+    </task>
+    <task id="LOCAL-00004" summary="ajout deplacemenent a une vitesse choisie">
+      <option name="closed" value="true" />
+      <created>1716400923483</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1716400923483</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Meilleure modulabilite">
+      <option name="closed" value="true" />
+      <created>1716402470988</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1716402470988</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Meilleure modulabilite">
+      <option name="closed" value="true" />
+      <created>1716402576605</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1716402576605</updated>
+    </task>
+    <task id="LOCAL-00007" summary="creation fichier codes finales -&gt;codespy">
+      <option name="closed" value="true" />
+      <created>1716403399498</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1716403399498</updated>
+    </task>
+    <task id="LOCAL-00008" summary="license+readme">
+      <option name="closed" value="true" />
+      <created>1716404475802</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1716404475802</updated>
+    </task>
+    <task id="LOCAL-00009" summary="license+readme">
+      <option name="closed" value="true" />
+      <created>1716404608062</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1716404608062</updated>
+    </task>
+    <task id="LOCAL-00010" summary="ajout de condition sur la demande de device">
+      <option name="closed" value="true" />
+      <created>1716408265551</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1716408265551</updated>
+    </task>
+    <task id="LOCAL-00011" summary="interface qui fonctionne">
+      <option name="closed" value="true" />
+      <created>1716471084872</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1716471084872</updated>
+    </task>
+    <task id="LOCAL-00012" summary="creation script methods_gui">
+      <option name="closed" value="true" />
+      <created>1716471241169</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1716471241169</updated>
+    </task>
+    <task id="LOCAL-00013" summary="interface plus propre">
+      <option name="closed" value="true" />
+      <created>1716472437905</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1716472437905</updated>
+    </task>
+    <task id="LOCAL-00014" summary="creation raccourci bureau">
+      <option name="closed" value="true" />
+      <created>1716473231050</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1716473231050</updated>
+    </task>
+    <task id="LOCAL-00015" summary="meilleure organisation">
+      <option name="closed" value="true" />
+      <created>1716473407734</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1716473407734</updated>
+    </task>
+    <task id="LOCAL-00016" summary="big picture (start end step size">
+      <option name="closed" value="true" />
+      <created>1716498238141</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1716498238141</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Visee d'une position" />
+    <MESSAGE value="avance par pas de 1 toutes les 3sec" />
+    <MESSAGE value="ajout de commande par utilisateur" />
+    <MESSAGE value="ajout deplacemenent a une vitesse choisie" />
+    <MESSAGE value="Meilleure modulabilite" />
+    <MESSAGE value="creation fichier codes finales -&gt;codespy" />
+    <MESSAGE value="license+readme" />
+    <MESSAGE value="ajout de condition sur la demande de device" />
+    <MESSAGE value="interface qui fonctionne" />
+    <MESSAGE value="creation script methods_gui" />
+    <MESSAGE value="interface plus propre" />
+    <MESSAGE value="creation raccourci bureau" />
+    <MESSAGE value="meilleure organisation" />
+    <MESSAGE value="big picture (start end step size" />
+    <option name="LAST_COMMIT_MESSAGE" value="big picture (start end step size" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$ControleVitesse.coverage" NAME="ControleVitesse Coverage Results" MODIFIED="1716391455944" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$spectro.coverage" NAME="spectro Coverage Results" MODIFIED="1717617183265" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mozza_python_stuffs" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$Gui_periodic_plot.coverage" NAME="Gui_periodic_plot Coverage Results" MODIFIED="1717678641063" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/mozza_python_stuffs" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$Vitesse.coverage" NAME="Vitesse Coverage Results" MODIFIED="1716402028307" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$MvtMoteurPas_Pas.coverage" NAME="MvtMoteurPas_Pas Coverage Results" MODIFIED="1716494536463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/codespy/MvtTerminal" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$PremierControle.coverage" NAME="PremierControle Coverage Results" MODIFIED="1717616383473" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$Methods_gui.coverage" NAME="Methods_gui Coverage Results" MODIFIED="1717616395905" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/codespy/Gui" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$interface_gui.coverage" NAME="interface_gui Coverage Results" MODIFIED="1717680509776" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/codespy/Gui" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$MvtMoteurContinu.coverage" NAME="MvtMoteurContinu Coverage Results" MODIFIED="1716408532072" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/codespy" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$Cmd_vitesse.coverage" NAME="Cmd+vitesse Coverage Results" MODIFIED="1716403161983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/codespy" />
+    <SUITE FILE_PATH="coverage/MoteurThorlabsKinesis$essais.coverage" NAME="essais Coverage Results" MODIFIED="1717681113898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

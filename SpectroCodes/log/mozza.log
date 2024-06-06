@@ -1,0 +1,24 @@
+05/06/2024 11:02:09 DEBUG cannot import gdrive api <function format_exc at 0x03190C90> 
+05/06/2024 11:02:09 DEBUG creating event queue in parent <function Mozza.poll_monitoring_information at 0x04590C90> 
+05/06/2024 11:02:09 DEBUG Initializing EventQueue with a 1.0 ms nap time 
+05/06/2024 11:02:09 DEBUG starting thread 
+05/06/2024 11:02:09 DEBUG function : streaming_task must set_instance(instance_reference) on launch 
+05/06/2024 11:02:09 DEBUG function : start_nonblock must set_instance(instance_reference) on launch 
+05/06/2024 11:02:09 ERROR Traceback (most recent call last):
+ 
+05/06/2024 11:02:09 ERROR   File "D:\Projets\mozza\pythonGUI\startupscript_cxfreeze.py", line 136, in <module>
+ 
+05/06/2024 11:02:09 ERROR   File "mozza_script.py", line 133, in <module>
+ 
+05/06/2024 11:02:09 ERROR   File "mozza_script.py", line 80, in run_main
+ 
+05/06/2024 11:02:09 ERROR   File "D:\Projets\mozza\pythonGUI\hw\mozza.py", line 300, in __init__
+ 
+05/06/2024 11:02:09 ERROR   File "D:\Projets\mozza\pythonGUI\hw\calibration\calibration.py", line 48, in __init__
+ 
+05/06/2024 11:02:09 ERROR   File "D:\Projets\mozza\pythonGUI\hw\calibration\calibration.py", line 107, in load_calibration
+ 
+05/06/2024 11:02:09 ERROR FileNotFoundError: [Errno 2] No such file or directory: ''
+ 
+05/06/2024 11:02:09 INFO no match 
+05/06/2024 11:02:09 INFO no match 
