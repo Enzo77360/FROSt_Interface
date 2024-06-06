@@ -1,106 +1,96 @@
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# -*- coding: utf-8 -*-
+import sys
+import numpy as np
+import struct
 import tkinter as tk
-from SpectroCodes.libmozza.Mozza import MozzaSpectro
-from SpectroCodes.libmozza.spectro import Acquisition, TriggerTimeoutError
+from tkinter import messagebox
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import libmozza.mozza_defines as MD
+from libmozza.mozza import MozzaUSB, MozzaError
 
+sys.path.append('.')
 
 class SpectroGUI:
     def __init__(self, master):
         self.master = master
         #self.master.title("Spectro GUI")
-        #self.master.geometry("500x600")
 
         # Créer une figure Matplotlib
-        self.fig, self.ax = plt.subplots()
+        self.fig = Figure(figsize=(5, 4), dpi=100)
+        self.ax1 = self.fig.add_subplot(211)
+        self.ax2 = self.fig.add_subplot(212)
+
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
-        self.canvas.get_tk_widget().pack()
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        # Bouton Actualiser
-        self.update_button = tk.Button(self.master, text="Actualiser", command=self.update_plot)
-        self.update_button.pack()
+        # # Bouton Actualiser
+        # self.update_button = tk.Button(self.master, text="Actualiser", command=self.update_plot)
+        # self.update_button.pack()
 
-        # # Bouton Quitter
-        # self.quit_button = tk.Button(self.master, text="Quitter", command=self.master.quit)
-        # self.quit_button.pack()
-
-        # Créer une instance de MozzaSpectro
-        self.spectro = MozzaSpectro()
-
-        # Obtenez les numéros de série des périphériques connectés
-        serials = MozzaSpectro.get_serials()
-        print(f"Available devices: {serials}")
-
-        if not serials:
-            raise Exception("No devices found")
-
-        # Connectez-vous au périphérique en utilisant le numéro de série
-        serial = serials[0]  # Par exemple, connectez-vous au premier périphérique
-        self.spectro.connect_device(serial)
-
-        # Définir le temps d'exposition (si nécessaire)
-        self.spectro.set_exposure(0.1)  # 0.1 secondes
-
-        # Essayer sans déclencheur externe
+        # Initialisation du dispositif Mozza
         try:
-            self.spectro.set_ext_trigger(False, apply=True)
+            self.mozza = MozzaUSB()
+            serials = self.mozza.get_serials()
+            if serials:
+                print(f'Found Mozza device with serials: {serials}')
+                self.mozza.connect(serial=serials[0])
+                self.mozza.set_wavenumber_array(np.arange(1e7 / 5000, 1e7 / 2000, 5))
+                self.mozza.acquisition_params.trigger_source = MD.INTERNAL
+                self.mozza.acquisition_params.trigger_frequency_Hz = 10000
+                self.mozza.set_auto_params()
+            else:
+                messagebox.showerror("Erreur", "No Mozza device found")
+                self.master.quit()
         except Exception as e:
-            print(f"Error setting external trigger: {e}")
+            messagebox.showerror("Erreur", f"Erreur lors de l'initialisation du dispositif Mozza : {e}")
+            self.master.quit()
 
-        # Définir les limites de la table spectrale
+        # Lancer la mise à jour périodique
+        self.update_spectro_gui()
+
+    def test_acquisition(self):
         try:
-            self.spectro.acquisition = Acquisition(start=0, stop=3499)  # Exemple de méthode possible
-        except AttributeError as e:
-            print(f"Error setting acquisition range: {e}")
-
-        # Vérifiez la correction d'amplitude
-        if not self.spectro.load_amp_correction(int(serial.split('#')[1])):
-            print("Amplitude correction file not found, proceeding without it.")
-
-        # Mettre à jour le plot périodiquement
-        self.update_periodically()
+            bytes_to_read = self.mozza.begin_acquisition()
+            raw = self.mozza.read_raw()
+            signal, reference = self.mozza.separate_sig_ref(raw)
+            self.mozza.end_acquisition()
+            spectrum = self.mozza.process_spectrum(sig_data=signal, ref_data=reference)
+            wnums = np.arange(1e7 / 5000, 1e7 / 2000, 5)
+            return (wnums, spectrum, signal, reference)
+        except MozzaError as e:
+            print(e)
+            return None
 
     def update_plot(self):
-        # Acquérir un nouveau spectre
-        try:
-            spectrum = self.spectro._acquire_spectrum(background_mode=False)
-        except TriggerTimeoutError:
-            print("Trigger timeout error: External trigger not detected.")
-            return
-        except Exception as e:
-            print(f"Error acquiring spectrum: {e}")
-            return
+        result = self.test_acquisition()
+        if result:
+            wnums, data, signal, reference = result
+            self.ax1.clear()
+            self.ax1.plot(wnums, data)
+            self.ax1.set_xlabel(r'wavenumber [cm$^{-1}$]')
+            self.ax1.set_ylabel(r'intensity [arb. units]')
+            self.ax1.grid()
 
-        # Vérifier si le spectre est acquis
-        if spectrum is not None:
-            print("Spectrum acquired successfully.")
+            smean, sstd = np.mean(signal), np.std(signal)
+            rmean, rstd = np.mean(reference), np.std(reference)
+            self.ax2.clear()
+            self.ax2.plot(signal, label=r'signal mean=%.0f$\pm$%.1f' % (smean, sstd))
+            self.ax2.plot(reference, label=r'reference mean=%.0f$\pm$%.1f' % (rmean, rstd))
+            self.ax2.set_xlabel('Sample index')
+            self.ax2.set_ylabel('Amplitude')
+            self.ax2.grid()
+            self.ax2.legend()
 
-            # Récupérer les longueurs d'onde
-            lambdas = self.spectro.lambdas
+            self.canvas.draw()
 
-            if lambdas is not None:
-                # Vérifier que les dimensions sont compatibles
-                if len(lambdas) == len(spectrum):
-                    # Mettre à jour le tracé avec le nouveau spectre
-                    self.ax.clear()  # Effacer le contenu actuel de la figure
-                    self.ax.plot(lambdas, spectrum)
-                    self.ax.set_title('Spectrum Intensity vs Wavelength')
-                    self.ax.set_xlabel('Wavelength (nm)')
-                    self.ax.set_ylabel('Intensity')
-                    self.canvas.draw()
-                else:
-                    print("Error: Dimensions of wavelength and spectrum data are not compatible.")
-                    print(len(lambdas), len(spectrum))
-            else:
-                print("Failed to retrieve wavelength data.")
-        else:
-            print("Failed to acquire spectrum.")
-
-    def update_periodically(self):
+    def update_spectro_gui(self):
         self.update_plot()
-        self.master.after(300, self.update_periodically)  # Actualiser toutes les 3 secondes
+        self.master.after(3, self.update_spectro_gui)  # Actualiser toutes les 3 secondes
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
+    print("Starting Spectro GUI...")
     root = tk.Tk()
     app = SpectroGUI(root)
     root.mainloop()

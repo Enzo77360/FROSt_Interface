@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from MotorCodes.Gui.Methods_gui import KCubeDCServoController
 import time
+import threading
 
 class MotorControllerGUI:
     def __init__(self, master):
@@ -120,22 +121,16 @@ class MotorControllerGUI:
             messagebox.showerror("Erreur", str(e))
 
     def move_backward(self):
-        try:
-            if not self.connected_device:
-                raise Exception("Veuillez connecter et initialiser le moteur avant de le déplacer.")
-            new_position = self.current_position - 0.5
-            self.controller.configure_movement(new_position, 1)
-            self.controller.move_motor()
-            self.controller.wait_for_completion()
-            self.current_position = new_position  # Mettre à jour la position actuelle
-        except Exception as e:
-            messagebox.showerror("Erreur", str(e))
+        threading.Thread(target=self._move, args=(-0.5,)).start()
 
     def move_forward(self):
+        threading.Thread(target=self._move, args=(0.5,)).start()
+
+    def _move(self, step):
         try:
             if not self.connected_device:
                 raise Exception("Veuillez connecter et initialiser le moteur avant de le déplacer.")
-            new_position = self.current_position + 0.5
+            new_position = self.current_position + step
             self.controller.configure_movement(new_position, 1)
             self.controller.move_motor()
             self.controller.wait_for_completion()
@@ -153,6 +148,9 @@ class MotorControllerGUI:
             pass
 
     def start_movement(self):
+        threading.Thread(target=self._start_movement).start()
+
+    def _start_movement(self):
         try:
             if not hasattr(self, 'start_position_val') or not hasattr(self, 'end_position_val') or not hasattr(self, 'step_size_val'):
                 raise ValueError("Veuillez définir les positions de départ, de fin et la taille des étapes.")
@@ -177,12 +175,3 @@ class MotorControllerGUI:
 
     def quit_program(self):
         self.master.quit()
-
-# # Créer une fenêtre
-# fenetre = tk.Tk()
-#
-# # Créer l'interface graphique du contrôleur de moteur
-# controller_gui = MotorControllerGUI(fenetre)
-#
-# # Lancer la boucle principale de l'interface graphique
-# fenetre.mainloop()
