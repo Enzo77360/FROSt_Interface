@@ -1,8 +1,8 @@
 import tkinter as tk
 from MotorCodes.Gui.interface_gui import MotorControllerGUI  # Importez votre classe MotorControllerGUI
 from SpectroCodes.Gui_Periodic_plot import SpectroGUI
-import threading
 
+import threading
 
 class MainApplication:
     def __init__(self, master):

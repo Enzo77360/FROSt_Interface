@@ -102,14 +102,8 @@ class SpectroGUI:
         else:
             self.pause_button.config(text="Pause")
 
-    def save_data(self):
+    def save_data(self,folder_name):
         if hasattr(self, 'wnums') and hasattr(self, 'data'):
-            # Nom du dossier pour enregistrer les acquisitions
-            folder_name = "Acquisitions"
-
-            # Vérifier si le dossier existe, sinon le créer
-            if not os.path.exists(folder_name):
-                os.makedirs(folder_name)
 
             # Chemin du fichier basé sur le compteur d'acquisitions
             file_name = f"{self.acquisition_count}_acquisition.csv"

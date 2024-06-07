@@ -6,6 +6,8 @@ import time
 import threading
 import os
 import csv
+from Trace_FROSt import HeatmapGUI
+from datetime import datetime
 
 # Importer la classe SpectroGUI
 from SpectroCodes.Gui_Periodic_plot import SpectroGUI
@@ -106,6 +108,10 @@ class MotorControllerGUI:
         self.button_quit = tk.Button(frame_actions, text="Quitter", command=self.quit_program)
         self.button_quit.pack(side="left", padx=5, pady=5)
 
+        # Créer le bouton "Next" en bas à droite
+        self.next_button = tk.Button(self.master, text="   Next   ", command=self.create_heatmap_gui)
+        self.next_button.pack(side="right", padx=5, pady=5)
+
     def set_spectro_gui(self, spectro_gui):
         self.spectro_gui = spectro_gui
 
@@ -177,6 +183,15 @@ class MotorControllerGUI:
             end_position = self.end_position_val
             step_size = self.step_size_val
 
+            # Obtenir la date et l'heure actuelles
+            current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            # Nom du dossier pour enregistrer les acquisitions avec le temps du moment de la création
+            folder_name = f"Acquisitions\\Acquisitions_{current_time}"
+
+            # Vérifier si le dossier existe, sinon le créer
+            if not os.path.exists(folder_name):
+                os.makedirs(folder_name)
+
             while current_position <= end_position:
                 self.controller.configure_movement(current_position, 1)
                 self.controller.move_motor()
@@ -184,13 +199,21 @@ class MotorControllerGUI:
                 self.current_position = current_position  # Mettre à jour la position actuelle
 
                 #file_path = r"C:\Users\enzos\PycharmProjects\FROSt_Interface"
-                self.spectro_gui.save_data()
+                self.spectro_gui.save_data(folder_name)
 
                 current_position += step_size
             messagebox.showinfo("Information", "Acquisition Terminee!")
 
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
+
+    def create_heatmap_gui(self):
+        # Créer la fenêtre HeatmapGUI lorsque le bouton "Next" est pressé
+        heatmap_window = tk.Toplevel(self.master)
+        heatmap_window.title("Heatmap de l'intensité en fonction du wavenumber")
+
+        # Instancier HeatmapGUI dans la nouvelle fenêtre
+        heatmap_gui = HeatmapGUI(heatmap_window)
 
     def quit_program(self):
         self.master.quit()
