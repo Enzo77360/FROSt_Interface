@@ -3,18 +3,18 @@ import sys
 import numpy as np
 import struct
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import libmozza.mozza_defines as MD
 from libmozza.mozza import MozzaUSB, MozzaError
-
+import csv
+import os
 sys.path.append('.')
 
 class SpectroGUI:
     def __init__(self, master):
         self.master = master
-        #self.master.title("Spectro GUI")
 
         # Créer une figure Matplotlib
         self.fig = Figure(figsize=(5, 4), dpi=100)
@@ -24,9 +24,15 @@ class SpectroGUI:
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        # # Bouton Actualiser
-        # self.update_button = tk.Button(self.master, text="Actualiser", command=self.update_plot)
-        # self.update_button.pack()
+        # Bouton Pause/Resume
+        self.is_paused = False
+        self.pause_button = tk.Button(self.master, text="Pause", command=self.toggle_pause)
+        self.pause_button.pack()
+
+        # # Bouton Save
+        # self.save_button = tk.Button(self.master, text="Save Data", command=self.save_data)
+        # self.save_button.pack()
+        self.acquisition_count = 1  # Initialisation du compteur d'acquisitions
 
         # Initialisation du dispositif Mozza
         try:
@@ -65,18 +71,18 @@ class SpectroGUI:
     def update_plot(self):
         result = self.test_acquisition()
         if result:
-            wnums, data, signal, reference = result
+            self.wnums, self.data, self.signal, self.reference = result
             self.ax1.clear()
-            self.ax1.plot(wnums, data)
+            self.ax1.plot(self.wnums, self.data)
             self.ax1.set_xlabel(r'wavenumber [cm$^{-1}$]')
             self.ax1.set_ylabel(r'intensity [arb. units]')
             self.ax1.grid()
 
-            smean, sstd = np.mean(signal), np.std(signal)
-            rmean, rstd = np.mean(reference), np.std(reference)
+            smean, sstd = np.mean(self.signal), np.std(self.signal)
+            rmean, rstd = np.mean(self.reference), np.std(self.reference)
             self.ax2.clear()
-            self.ax2.plot(signal, label=r'signal mean=%.0f$\pm$%.1f' % (smean, sstd))
-            self.ax2.plot(reference, label=r'reference mean=%.0f$\pm$%.1f' % (rmean, rstd))
+            self.ax2.plot(self.signal, label=r'signal mean=%.0f$\pm$%.1f' % (smean, sstd))
+            self.ax2.plot(self.reference, label=r'reference mean=%.0f$\pm$%.1f' % (rmean, rstd))
             self.ax2.set_xlabel('Sample index')
             self.ax2.set_ylabel('Amplitude')
             self.ax2.grid()
@@ -85,9 +91,43 @@ class SpectroGUI:
             self.canvas.draw()
 
     def update_spectro_gui(self):
-        self.update_plot()
+        if not self.is_paused:
+            self.update_plot()
         self.master.after(3, self.update_spectro_gui)  # Actualiser toutes les 3 secondes
 
+    def toggle_pause(self):
+        self.is_paused = not self.is_paused
+        if self.is_paused:
+            self.pause_button.config(text="Resume")
+        else:
+            self.pause_button.config(text="Pause")
+
+    def save_data(self):
+        if hasattr(self, 'wnums') and hasattr(self, 'data'):
+            # Nom du dossier pour enregistrer les acquisitions
+            folder_name = "Acquisitions"
+
+            # Vérifier si le dossier existe, sinon le créer
+            if not os.path.exists(folder_name):
+                os.makedirs(folder_name)
+
+            # Chemin du fichier basé sur le compteur d'acquisitions
+            file_name = f"{self.acquisition_count}_acquisition.csv"
+            file_path = os.path.join(folder_name, file_name)
+
+            # Enregistrement des données dans le fichier spécifié
+            with open(file_path, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Wavenumber [cm^-1]', 'Intensity [arb. units]', 'Signal', 'Reference'])
+                for i in range(len(self.wnums)):
+                    writer.writerow([self.wnums[i], self.data[i], self.signal[i], self.reference[i]])
+
+            # Augmentation du compteur d'acquisitions
+            self.acquisition_count += 1
+
+            # messagebox.showinfo("Save Data", "Data saved successfully!")
+        else:
+            messagebox.showwarning("Save Data", "No data to save!")
 
 if __name__ == '__main__':
     print("Starting Spectro GUI...")

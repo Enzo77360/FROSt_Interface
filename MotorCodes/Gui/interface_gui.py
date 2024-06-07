@@ -1,8 +1,15 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 from MotorCodes.Gui.Methods_gui import KCubeDCServoController
 import time
 import threading
+import os
+import csv
+
+# Importer la classe SpectroGUI
+from SpectroCodes.Gui_Periodic_plot import SpectroGUI
+
 
 class MotorControllerGUI:
     def __init__(self, master):
@@ -10,6 +17,7 @@ class MotorControllerGUI:
         self.controller = KCubeDCServoController()  # Créer une instance du contrôleur de moteur
         self.connected_device = None  # Variable pour stocker le périphérique connecté
         self.current_position = 0.0  # Initialiser la position actuelle du moteur
+        self.spectro_gui = None  # Instance de SpectroGUI pour la mise à jour du spectrogramme
 
         # Variables pour stocker les valeurs de départ, d'arrivée et de taille des étapes
         self.start_position = tk.StringVar()
@@ -98,6 +106,9 @@ class MotorControllerGUI:
         self.button_quit = tk.Button(frame_actions, text="Quitter", command=self.quit_program)
         self.button_quit.pack(side="left", padx=5, pady=5)
 
+    def set_spectro_gui(self, spectro_gui):
+        self.spectro_gui = spectro_gui
+
     def refresh_devices(self):
         self.listbox_devices.delete(0, tk.END)
         for device in self.controller.get_device_list():
@@ -135,6 +146,9 @@ class MotorControllerGUI:
             self.controller.move_motor()
             self.controller.wait_for_completion()
             self.current_position = new_position  # Mettre à jour la position actuelle
+
+
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
@@ -157,21 +171,37 @@ class MotorControllerGUI:
 
             device_id = self.connected_device
             if not device_id:
-                raise Exception("Veuillez connecter et initialiser le moteur avant de le déplacer.")
+                raise Exception("Veuillez connecter et initialiser le moteur avant de commencer le mouvement.")
 
             current_position = self.start_position_val
-            while current_position <= self.end_position_val:
-                self.controller.configure_movement(current_position, 2)  # Configurer pour 2 secondes à chaque étape
+            end_position = self.end_position_val
+            step_size = self.step_size_val
+
+            while current_position <= end_position:
+                self.controller.configure_movement(current_position, 1)
                 self.controller.move_motor()
                 self.controller.wait_for_completion()
-                time.sleep(2)  # Attendre 2 secondes à chaque étape #TODO add trigger
-                current_position += self.step_size_val
+                self.current_position = current_position  # Mettre à jour la position actuelle
 
-            messagebox.showinfo("Déplacement", "Déplacement terminé.")
-        except ValueError as e:
-            messagebox.showerror("Erreur", str(e))
+                #file_path = r"C:\Users\enzos\PycharmProjects\FROSt_Interface"
+                self.spectro_gui.save_data()
+
+                current_position += step_size
+            messagebox.showinfo("Information", "Acquisition Terminee!")
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
     def quit_program(self):
         self.master.quit()
+        self.master.destroy()
+
+# SpectroGUI class should be the same as provided earlier
+# Make sure SpectroGUI class is correctly implemented and imported
+
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = MotorControllerGUI(root)
+    root.mainloop()

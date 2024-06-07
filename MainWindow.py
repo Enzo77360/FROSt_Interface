@@ -3,6 +3,7 @@ from MotorCodes.Gui.interface_gui import MotorControllerGUI  # Importez votre cl
 from SpectroCodes.Gui_Periodic_plot import SpectroGUI
 import threading
 
+
 class MainApplication:
     def __init__(self, master):
         self.master = master
@@ -22,6 +23,9 @@ class MainApplication:
 
         # Créer une instance de SpectroGUI dans le frame de gauche
         self.spectro_gui = SpectroGUI(self.left_frame)
+
+        # Lier la mise à jour du spectrogramme à l'événement de mouvement du moteur
+        self.motor_controller.set_spectro_gui(self.spectro_gui)
 
 
 
