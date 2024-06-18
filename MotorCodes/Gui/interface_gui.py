@@ -18,6 +18,7 @@ class MotorControllerGUI:
         self.connected_device = None  # Variable pour stocker le périphérique connecté
         self.current_position = 0.0  # Initialiser la position actuelle du moteur
         self.spectro_gui = None # Instance de SpectroGUI pour la mise à jour du spectrogramme
+        self.data_folder = r"C:\Users\enzos\PycharmProjects\FROSt_Interface"
 
         # Variables pour stocker les valeurs de départ, d'arrivée et de taille des étapes
         self.home_position_fs = tk.StringVar()
@@ -220,7 +221,7 @@ class MotorControllerGUI:
             # Obtenir la date et l'heure actuelles
             current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             # Nom du dossier pour enregistrer les acquisitions avec le temps du moment de la création
-            folder_name = f"Acquisitions\\Acquisitions_{current_time}"
+            folder_name = os.path.join(self.data_folder, f"Acquisitions\\Acquisitions_{current_time}")
 
             # Vérifier si le dossier existe, sinon le créer
             if not os.path.exists(folder_name):
@@ -231,7 +232,7 @@ class MotorControllerGUI:
                 self.controller.move_motor()
                 self.controller.wait_for_completion()
                 self.current_position = current_position  # Mettre à jour la position actuelle
-                self.spectro_gui.update_plot()
+                self.spectro_gui.update_all_params()
                 self.spectro_gui.save_data(folder_name)
 
                 current_position += step_size

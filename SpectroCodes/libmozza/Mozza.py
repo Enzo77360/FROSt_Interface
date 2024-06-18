@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
 import logging
-LOG = logging.getLogger(__name__)
 import numpy as np
 from threading import RLock
 from time import sleep
 from pathlib import Path
-
 from SpectroCodes.libmozza.spectro import Spectro, SpectroError, Acquisition, SpectralUnits, TriggerTimeoutError
 from libmozza.mozza import MozzaUSB, MozzaError
-import libmozza.mozza_defines as MD
+import libmozza.mozza_defines as md
+LOG = logging.getLogger(__name__)
 
 
 class MozzaSpectro(Spectro):
@@ -23,7 +21,7 @@ class MozzaSpectro(Spectro):
         self.native_units = SpectralUnits.inv_cm
         self._trigger_delay_us = 0.
 
-        self._acquisition = Acquisition(0,0)
+        self._acquisition = Acquisition(0, 0)
         self._lock = RLock()
         self.buffer = np.zeros(0, dtype=np.uint8)
         
@@ -85,10 +83,10 @@ class MozzaSpectro(Spectro):
         return 0.
 
     def set_ext_trigger(self, flag, apply=False, update_delay=False):
-        self.device.acquisition_params.trigger_source = MD.EXTERNAL if flag else MD.INTERNAL
+        self.device.acquisition_params.trigger_source = md.EXTERNAL if flag else md.INTERNAL
 
         if update_delay:
-            if self.device.acquisition_params.trigger_source == MD.INTERNAL:
+            if self.device.acquisition_params.trigger_source == md.INTERNAL:
                 self._trigger_delay_us = self.device.acquisition_params.trigger_delay_us
                 self.device.acquisition_params.trigger_delay_us = 0
             else:
@@ -102,7 +100,7 @@ class MozzaSpectro(Spectro):
                     raise SpectroError(f"Error in setting exernal trigger {e}")
 
     def get_ext_trigger(self):
-        return self.device.acquisition_params.trigger_source == MD.EXTERNAL
+        return self.device.acquisition_params.trigger_source == md.EXTERNAL
 
     def load_table(self, start, stop, wnums=None):
         LOG.debug('updating table')
@@ -131,11 +129,12 @@ class MozzaSpectro(Spectro):
         self.buffer = np.zeros(self.device.get_raw_data_size(self.device.table_length),
                                dtype=np.uint8)
         
-        if self.correct_amplitude is not None: # the only condition to create amp_correction array - the function exists!
+        if self.correct_amplitude is not None:
+            # the only condition to create amp_correction array - the function exists!
             self.amp_correction = self.correct_amplitude(wnums)
 
     def read_raw(self):
-        if self.device.acquisition_params.trigger_source == MD.EXTERNAL:
+        if self.device.acquisition_params.trigger_source == md.EXTERNAL:
             trigger_freq = float(self.device.get_trigger_frequency())
             if trigger_freq == 0:
                 raise TriggerTimeoutError

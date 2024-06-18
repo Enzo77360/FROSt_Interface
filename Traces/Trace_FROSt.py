@@ -7,13 +7,14 @@ import numpy as np
 from tkinter import Tk, Button, filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+
 class HeatmapGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Heatmap de l'intensité en fonction du wavenumber")
 
         # Chemin du dossier contenant les acquisitions
-        self.base_directory = "Acquisitions"
+        self.base_directory = r"C:\Users\enzos\PycharmProjects\FROSt_Interface\Acquisitions"
 
         # Obtenir le dernier dossier créé dans le répertoire "Acquisitions"
         self.directory = self.get_latest_directory(self.base_directory)
@@ -55,6 +56,8 @@ class HeatmapGUI:
 
         # Masquer les index de l'axe des ordonnées
         self.ax.set_yticks([])
+        self.ax.set_xticks([])
+
 
         # Créer le canevas pour afficher le graphique dans la GUI
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
@@ -66,7 +69,8 @@ class HeatmapGUI:
 
     def get_latest_directory(self, base_directory):
         # Obtenir une liste de tous les sous-dossiers dans le répertoire de base
-        subdirs = [os.path.join(base_directory, d) for d in os.listdir(base_directory) if os.path.isdir(os.path.join(base_directory, d))]
+        subdirs = [os.path.join(base_directory, d) for d in os.listdir(base_directory)
+                   if os.path.isdir(os.path.join(base_directory, d))]
         # Trier les sous-dossiers par date de création
         subdirs.sort(key=os.path.getctime, reverse=True)
         # Retourner le dernier dossier créé (le plus récent)
@@ -81,10 +85,12 @@ class HeatmapGUI:
             # Sauvegarder les données de la matrice d'intensité dans un fichier texte
             np.savetxt(file_path, self.intensity_matrix, delimiter=',', header='Intensity Matrix')
 
+
 def main():
     root = Tk()
     app = HeatmapGUI(root)
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
