@@ -5,6 +5,8 @@ import threading
 import os
 from Traces.Trace_FROSt import HeatmapGUI
 from datetime import datetime
+# Importer la classe SpectroGUI
+from SpectroCodes.Gui_Periodic_plot import SpectroGUI
 
 C_MM_PER_FS = 3e-4  # La vitesse de la lumière en mm/fs (3e8 m/s = 3e5 mm/s = 3e-4 mm/fs)
 
@@ -15,7 +17,7 @@ class MotorControllerGUI:
         self.controller = KCubeDCServoController()  # Créer une instance du contrôleur de moteur
         self.connected_device = None  # Variable pour stocker le périphérique connecté
         self.current_position = 0.0  # Initialiser la position actuelle du moteur
-        self.spectro_gui = None  # Instance de SpectroGUI pour la mise à jour du spectrogramme
+        self.spectro_gui = None # Instance de SpectroGUI pour la mise à jour du spectrogramme
 
         # Variables pour stocker les valeurs de départ, d'arrivée et de taille des étapes
         self.home_position_fs = tk.StringVar()
@@ -82,11 +84,16 @@ class MotorControllerGUI:
         self.button_backward.pack(side="left", padx=5)
         self.button_forward.pack(side="left", padx=5)
 
-        # Libellé et champ de saisie pour HOME
-        self.label_home = tk.Label(frame_params, text="HOME (fs):")
-        self.label_home.pack(anchor="w")
-        self.entry_home = tk.Entry(frame_params, textvariable=self.home_position_fs)
-        self.entry_home.pack(fill="x", pady=5)
+        # Étiquette pour afficher la position actuelle
+        self.label_current_position = tk.Label(frame_buttons,
+                                               text=f"Position actuelle (fs): {self.current_position:.2f}")
+        self.label_current_position.pack(side="left", padx=5, pady=5)
+
+        # Ajouter un bouton Set sous les boutons Backward et Forward
+        self.button_set = tk.Button(frame_buttons, text="Set", command=self.set_position_to_zero)
+        self.button_set.pack(side="left", padx=5, pady=5)
+
+
 
         # Libellé et champ de saisie pour la position de départ
         self.label_start = tk.Label(frame_params, text="Position de départ (fs):")
@@ -128,6 +135,14 @@ class MotorControllerGUI:
         self.next_button = tk.Button(self.master, text="   Next   ", command=self.create_heatmap_gui)
         self.next_button.pack(side="right", padx=5, pady=5)
 
+        # Fonction pour mettre à jour l'affichage de la position actuelle à 0.00 fs
+    def set_position_to_zero(self):
+        self.label_current_position.config(text="Position actuelle (fs): 0.00")
+
+    def update_position_labels(self):
+        current_fs = self.current_position / (C_MM_PER_FS / 2)
+        self.label_current_position.config(text=f"Position actuelle (fs): {current_fs:.2f}")
+
     def move_backward(self):
         threading.Thread(target=self._move, args=(-1,)).start()
 
@@ -145,6 +160,7 @@ class MotorControllerGUI:
             self.controller.move_motor()
             self.controller.wait_for_completion()
             self.current_position = new_position  # Mettre à jour la position actuelle
+            self.update_position_labels()
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
@@ -175,7 +191,7 @@ class MotorControllerGUI:
 
     def validate_entries(self, *args):
         try:
-            self.home_position_val = float(self.home_position_fs.get())* C_MM_PER_FS / 2
+            self.home_position_val = float(self.current_position)
             self.start_position_val = float(self.start_position.get()) * C_MM_PER_FS / 2  # aller-retour
             self.end_position_val = float(self.end_position.get()) * C_MM_PER_FS / 2
             self.step_size_val = float(self.step_size.get()) * C_MM_PER_FS / 2

@@ -1,22 +1,29 @@
 import tkinter as tk
+from PIL import Image, ImageTk  # Importez les modules nécessaires de PIL
 from MotorCodes.Gui.interface_gui import MotorControllerGUI  # Importez votre classe MotorControllerGUI
 from SpectroCodes.Gui_Periodic_plot import SpectroGUI
 
-import threading
 
 class MainApplication:
     def __init__(self, master):
         self.master = master
-        self.master.title("Main Application")
+        self.master.title("FROSt Interface")
 
         # Créer les frames pour les instances de SpectroGUI1 et MotorControllerGUI
-        self.left_frame = tk.Frame(self.master, width=450, height=650)
+        self.left_frame = tk.Frame(self.master, width=700, height=700)
         self.left_frame.pack_propagate(False)
         self.left_frame.pack(side="left")
 
-        self.right_frame = tk.Frame(self.master, width=450, height=650)
+        self.right_frame = tk.Frame(self.master, width=450, height=700)
         self.right_frame.pack_propagate(False)
         self.right_frame.pack(side="right")
+
+        # Charger, redimensionner et afficher le logo
+        original_logo = Image.open(r"C:\Users\enzos\OneDrive\Pictures\LogoINRS.png")  # Chemin réel de votre logo
+        resized_logo = original_logo.resize((120, 83), Image.BILINEAR)  # Redimensionner l'image à 80x60 pixels
+        self.logo_image = ImageTk.PhotoImage(resized_logo)
+        self.logo_label = tk.Label(self.master, image=self.logo_image)
+        self.logo_label.place(x=900, y=600)  # Placez le logo à la position (20, 20)
 
         # Créer une instance de MotorControllerGUI dans le frame de droite
         self.motor_controller = MotorControllerGUI(self.right_frame)
@@ -26,7 +33,6 @@ class MainApplication:
 
         # Lier la mise à jour du spectrogramme à l'événement de mouvement du moteur
         self.motor_controller.set_spectro_gui(self.spectro_gui)
-
 
 
 if __name__ == "__main__":
