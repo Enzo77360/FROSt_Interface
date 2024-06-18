@@ -1,30 +1,28 @@
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import filedialog
 from MotorCodes.Gui.Methods_gui import KCubeDCServoController
-import time
 import threading
 import os
-import csv
-from Trace_FROSt import HeatmapGUI
+from Traces.Trace_FROSt import HeatmapGUI
 from datetime import datetime
 
-# Importer la classe SpectroGUI
-from SpectroCodes.Gui_Periodic_plot import SpectroGUI
-
+C_MM_PER_FS = 3e-4  # La vitesse de la lumière en mm/fs (3e8 m/s = 3e5 mm/s = 3e-4 mm/fs)
 
 class MotorControllerGUI:
     def __init__(self, master):
         self.master = master
+        # self.master.geometry("400x700") # Attention à l'enlever après
         self.controller = KCubeDCServoController()  # Créer une instance du contrôleur de moteur
         self.connected_device = None  # Variable pour stocker le périphérique connecté
         self.current_position = 0.0  # Initialiser la position actuelle du moteur
         self.spectro_gui = None  # Instance de SpectroGUI pour la mise à jour du spectrogramme
 
         # Variables pour stocker les valeurs de départ, d'arrivée et de taille des étapes
+        self.home_position_fs = tk.StringVar()
         self.start_position = tk.StringVar()
         self.end_position = tk.StringVar()
         self.step_size = tk.StringVar()
+        self.step = tk.StringVar()
 
         # Appliquer le thème "xpnative"
         self.master.option_add('*TCombobox*Listbox.background', '#FFFFFF')
@@ -43,7 +41,7 @@ class MotorControllerGUI:
         frame_devices.pack(padx=10, pady=10, fill="x")
 
         # Boîte de liste pour afficher les périphériques
-        self.listbox_devices = tk.Listbox(frame_devices, height=5)
+        self.listbox_devices = tk.Listbox(frame_devices, height=2)
         self.listbox_devices.pack(padx=10, pady=5, fill="x")
         self.listbox_devices.bind("<Double-Button-1>", self.select_device_from_list)
 
@@ -65,40 +63,58 @@ class MotorControllerGUI:
         self.button_init = tk.Button(frame_params, text="Initialiser", command=self.initialize_motor)
         self.button_init.pack(fill="x", padx=5, pady=5)
 
+        # Step fs:
+        # Libellé et champ de saisie pour la taille Step
+        self.label_step = tk.Label(frame_params, text="Step (fs):")
+        self.label_step.pack(anchor="w")
+        self.entry_step = tk.Entry(frame_params, textvariable=self.step)
+        self.entry_step.pack(fill="x", pady=5)
+
+        # Frame pour contenir les boutons Backward et Forward
+        frame_buttons = tk.Frame(frame_params)
+        frame_buttons.pack(fill="x", padx=5, pady=5)
+
         # Ajouter les boutons Backward et Forward sous le bouton Initialiser
-        self.button_backward = tk.Button(frame_params, text="Backward", command=self.move_backward)
-        self.button_forward = tk.Button(frame_params, text="Forward", command=self.move_forward)
+        self.button_backward = tk.Button(frame_buttons, text="Backward", command=self.move_backward)
+        self.button_forward = tk.Button(frame_buttons, text="Forward", command=self.move_forward)
 
         # Pack les boutons Backward et Forward sur la même ligne
-        self.button_backward.pack(side="left", padx=5, pady=5)
-        self.button_forward.pack(side="left", padx=5, pady=5)
+        self.button_backward.pack(side="left", padx=5)
+        self.button_forward.pack(side="left", padx=5)
+
+        # Libellé et champ de saisie pour HOME
+        self.label_home = tk.Label(frame_params, text="HOME (fs):")
+        self.label_home.pack(anchor="w")
+        self.entry_home = tk.Entry(frame_params, textvariable=self.home_position_fs)
+        self.entry_home.pack(fill="x", pady=5)
 
         # Libellé et champ de saisie pour la position de départ
-        self.label_start = tk.Label(frame_params, text="Position de départ (mm):")
+        self.label_start = tk.Label(frame_params, text="Position de départ (fs):")
         self.label_start.pack(anchor="w")
         self.entry_start = tk.Entry(frame_params, textvariable=self.start_position)
         self.entry_start.pack(fill="x", pady=5)
 
         # Libellé et champ de saisie pour la position de fin
-        self.label_end = tk.Label(frame_params, text="Position de fin (mm):")
+        self.label_end = tk.Label(frame_params, text="Position de fin (fs):")
         self.label_end.pack(anchor="w")
         self.entry_end = tk.Entry(frame_params, textvariable=self.end_position)
         self.entry_end.pack(fill="x", pady=5)
 
         # Libellé et champ de saisie pour la taille des étapes
-        self.label_step = tk.Label(frame_params, text="Taille des étapes (mm):")
-        self.label_step.pack(anchor="w")
-        self.entry_step = tk.Entry(frame_params, textvariable=self.step_size)
-        self.entry_step.pack(fill="x", pady=5)
+        self.label_step_size = tk.Label(frame_params, text="Taille des étapes (fs):")
+        self.label_step_size.pack(anchor="w")
+        self.entry_step_size = tk.Entry(frame_params, textvariable=self.step_size)
+        self.entry_step_size.pack(fill="x", pady=5)
 
         # Ajouter les traces pour valider automatiquement les entrées
+        self.home_position_fs.trace_add("write", self.validate_entries)
         self.start_position.trace_add("write", self.validate_entries)
         self.end_position.trace_add("write", self.validate_entries)
         self.step_size.trace_add("write", self.validate_entries)
 
         # Frame pour les boutons d'action
-        frame_actions = tk.Frame(self.master, padx=10, pady=10)
-        frame_actions.pack(padx=10, pady=10, fill="x")
+        frame_actions = tk.Frame(self.master, padx=5, pady=5)
+        frame_actions.pack(padx=5, pady=5, fill="x")
 
         # Bouton pour démarrer le déplacement
         self.button_move = tk.Button(frame_actions, text="Déplacer", command=self.start_movement)
@@ -111,6 +127,26 @@ class MotorControllerGUI:
         # Créer le bouton "Next" en bas à droite
         self.next_button = tk.Button(self.master, text="   Next   ", command=self.create_heatmap_gui)
         self.next_button.pack(side="right", padx=5, pady=5)
+
+    def move_backward(self):
+        threading.Thread(target=self._move, args=(-1,)).start()
+
+    def move_forward(self):
+        threading.Thread(target=self._move, args=(1,)).start()
+
+    def _move(self, direction):
+        try:
+            if not self.connected_device:
+                raise Exception("Veuillez connecter et initialiser le moteur avant de le déplacer.")
+            step_fs = float(self.step.get())  # Récupérer la taille de l'étape en femtosecondes
+            step_mm = step_fs * C_MM_PER_FS * direction / 2  # Convertir en millimètres et appliquer la direction
+            new_position = self.current_position + step_mm  # aller- retour
+            self.controller.configure_movement(new_position, 1)
+            self.controller.move_motor()
+            self.controller.wait_for_completion()
+            self.current_position = new_position  # Mettre à jour la position actuelle
+        except Exception as e:
+            messagebox.showerror("Erreur", str(e))
 
     def set_spectro_gui(self, spectro_gui):
         self.spectro_gui = spectro_gui
@@ -137,32 +173,12 @@ class MotorControllerGUI:
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
-    def move_backward(self):
-        threading.Thread(target=self._move, args=(-0.5,)).start()
-
-    def move_forward(self):
-        threading.Thread(target=self._move, args=(0.5,)).start()
-
-    def _move(self, step):
-        try:
-            if not self.connected_device:
-                raise Exception("Veuillez connecter et initialiser le moteur avant de le déplacer.")
-            new_position = self.current_position + step
-            self.controller.configure_movement(new_position, 1)
-            self.controller.move_motor()
-            self.controller.wait_for_completion()
-            self.current_position = new_position  # Mettre à jour la position actuelle
-
-
-
-        except Exception as e:
-            messagebox.showerror("Erreur", str(e))
-
     def validate_entries(self, *args):
         try:
-            self.start_position_val = float(self.start_position.get())
-            self.end_position_val = float(self.end_position.get())
-            self.step_size_val = float(self.step_size.get())
+            self.home_position_val = float(self.home_position_fs.get())* C_MM_PER_FS / 2
+            self.start_position_val = float(self.start_position.get()) * C_MM_PER_FS / 2  # aller-retour
+            self.end_position_val = float(self.end_position.get()) * C_MM_PER_FS / 2
+            self.step_size_val = float(self.step_size.get()) * C_MM_PER_FS / 2
         except ValueError:
             # Ne rien faire si les valeurs ne sont pas encore toutes remplies ou sont invalides
             pass
@@ -172,15 +188,17 @@ class MotorControllerGUI:
 
     def _start_movement(self):
         try:
-            if not hasattr(self, 'start_position_val') or not hasattr(self, 'end_position_val') or not hasattr(self, 'step_size_val'):
-                raise ValueError("Veuillez définir les positions de départ, de fin et la taille des étapes.")
+            if (not hasattr(self, 'home_position_val') or not hasattr(self, 'start_position_val')
+                    or not hasattr(self, 'end_position_val') or not hasattr(self, 'step_size_val')):
+                raise ValueError("Veuillez définir la position HOME, les positions de départ et de fin, ainsi que la taille des étapes.")
 
             device_id = self.connected_device
             if not device_id:
                 raise Exception("Veuillez connecter et initialiser le moteur avant de commencer le mouvement.")
 
-            current_position = self.start_position_val
-            end_position = self.end_position_val
+            home_position = self.home_position_val
+            current_position = home_position + self.start_position_val
+            end_position = home_position + self.end_position_val
             step_size = self.step_size_val
 
             # Obtenir la date et l'heure actuelles
@@ -197,12 +215,11 @@ class MotorControllerGUI:
                 self.controller.move_motor()
                 self.controller.wait_for_completion()
                 self.current_position = current_position  # Mettre à jour la position actuelle
-
-                #file_path = r"C:\Users\enzos\PycharmProjects\FROSt_Interface"
+                self.spectro_gui.update_plot()
                 self.spectro_gui.save_data(folder_name)
 
                 current_position += step_size
-            messagebox.showinfo("Information", "Acquisition Terminee!")
+            messagebox.showinfo("Information", "Acquisition terminée !")
 
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
@@ -213,16 +230,11 @@ class MotorControllerGUI:
         heatmap_window.title("Heatmap de l'intensité en fonction du wavenumber")
 
         # Instancier HeatmapGUI dans la nouvelle fenêtre
-        heatmap_gui = HeatmapGUI(heatmap_window)
+        HeatmapGUI(heatmap_window)
 
     def quit_program(self):
         self.master.quit()
         self.master.destroy()
-
-# SpectroGUI class should be the same as provided earlier
-# Make sure SpectroGUI class is correctly implemented and imported
-
-
 
 if __name__ == '__main__':
     root = tk.Tk()
