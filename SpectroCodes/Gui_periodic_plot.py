@@ -2,12 +2,15 @@ import sys
 import numpy as np
 import tkinter as tk
 from tkinter import messagebox
+import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import libmozza.mozza_defines as md
 from libmozza.mozza import MozzaUSB, MozzaError
 import csv
 import os
+
+
 sys.path.append('.')
 
 class SpectroGUI:
@@ -31,6 +34,8 @@ class SpectroGUI:
         self.create_parameter_controls()
 
         self.acquisition_count = 1  # Initialisation du compteur d'acquisitions
+        self.is_first_apply = True  # Variable pour suivre si Apply a été pressé pour la première fois
+        self.is_paused = True  # Variable pour suivre si le système est en pause ou en marche
 
         # Initialisation du dispositif Mozza
         try:
@@ -66,9 +71,9 @@ class SpectroGUI:
         wave_frame = tk.Frame(param_frame, bg='#f0f0f0')
         wave_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
 
-        self.create_param_entry(wave_frame, "Wavenumber Initial (nm)", "5000")
-        self.create_param_entry(wave_frame, "Wavenumber Final (nm)", "2000")
-        self.create_param_entry(wave_frame, "Wavenumber Step (nm)", "5")
+        self.create_param_entry(wave_frame, "Wavelength Initial (nm)", "2000")
+        self.create_param_entry(wave_frame, "Wavelength Final (nm)", "5000")
+        self.create_param_entry(wave_frame, "Wavelength Step (nm)", "5")
 
         # Ligne pour les autres paramètres
         other_frame = tk.Frame(param_frame, bg='#f0f0f0')
@@ -83,12 +88,12 @@ class SpectroGUI:
         button_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
 
         # Bouton Pause/Resume
-        self.is_paused = True
+        # self.is_paused = True
         self.pause_button = tk.Button(button_frame, text="Start", command=self.toggle_pause, font=("Arial", 10),
-                                      bg='#4CAF50', fg='white')
+                                      bg='#4CAF50', fg='white', state=tk.DISABLED)
         self.pause_button.pack(side=tk.RIGHT)
 
-        set_global_button = tk.Button(button_frame, text="Set Global", command=self.update_all_params,
+        set_global_button = tk.Button(button_frame, text="Apply", command=self.update_all_params,
                                       font=("Arial", 10), bg='#2196F3', fg='white')
         set_global_button.pack(side=tk.RIGHT, padx=5)
 
@@ -105,76 +110,72 @@ class SpectroGUI:
         self.param_entries[label_text] = entry
 
     def update_all_params(self):
-        try:
-            # Récupérer les valeurs des paramètres
-            wavenumber_initial = float(self.param_entries["Wavenumber Initial (nm)"].get())
-            wavenumber_final = float(self.param_entries["Wavenumber Final (nm)"].get())
-            wavenumber_step = float(self.param_entries["Wavenumber Step (nm)"].get())
-            trigger_frequency = float(self.param_entries["Trigger Frequency (Hz)"].get())
-            acquisition_time = float(self.param_entries["Acquisition Time (us)"].get())
-            trigger_to_laser = float(self.param_entries["Trigger to Laser (us)"].get())
+        if self.is_first_apply:
+            self.is_first_apply = False  # Mettre à jour pour indiquer que Apply a été pressé pour la première fois
+            self.pause_button.config(state=tk.NORMAL)  # Activer le bouton Start une fois que Apply est pressé
 
-            # Convertir les longueurs d'onde en nombres d'onde
-            wavenumber_initial = 1e7 / wavenumber_initial
-            wavenumber_final = 1e7 / wavenumber_final
-            wavenumber_step = 1e7 / wavenumber_step
-
-            # Mettre à jour les paramètres de l'appareil Mozza
-            self.mozza.set_wavenumber_array(np.arange(wavenumber_initial, wavenumber_final, wavenumber_step))
-            self.mozza.acquisition_params.trigger_frequency_Hz = trigger_frequency
-            self.mozza.set_auto_params(point_repetition=1, reference_offset=0,
-                                       signal_high_gain=False, reference_high_gain=False,
-                                       trigger_to_laser_us=trigger_to_laser, acquisition_time_us=acquisition_time)
-            messagebox.showinfo("Success", "Parameters updated successfully")
-        except Exception as e:
-            messagebox.showerror("Erreur", f"Erreur lors de la mise à jour des paramètres : {e}")
+        # Récupérer les valeurs des paramètres
+        self.wavelength_initial = float(self.param_entries["Wavelength Initial (nm)"].get())
+        self.wavelength_final = float(self.param_entries["Wavelength Final (nm)"].get())
+        self.wavenumber_step = float(self.param_entries["Wavelength Step (nm)"].get())
+        self.trigger_frequency = int(self.param_entries["Trigger Frequency (Hz)"].get())
+        self.acquisition_time = int(self.param_entries["Acquisition Time (us)"].get())
+        self.trigger_to_laser = int(self.param_entries["Trigger to Laser (us)"].get())
+        # self.mozza.set_auto_params(self.acquisition_time)
 
     def test_acquisition(self):
-        try:
-            bytes_to_read = self.mozza.begin_acquisition()
-            raw = self.mozza.read_raw()
-            signal, reference = self.mozza.separate_sig_ref(raw)
-            self.mozza.end_acquisition()
-            spectrum = self.mozza.process_spectrum(sig_data=signal, ref_data=reference)
-            wnums = np.arange(1e7 / 5000, 1e7 / 2000, 5)
-            return wnums, spectrum, signal, reference
-        except MozzaError as e:
-            print(e)
-            return None
+        wls_nm = (1e7 / self.wavelength_final, 1e7 / self.wavelength_initial )
+        wnums = np.arange(1e7 / wls_nm[1], 1e7 / wls_nm[0], self.wavenumber_step)
+        self.mozza.set_wavenumber_array(wnums)
+        self.mozza.acquisition_params.trigger_frequency_Hz = self.trigger_frequency
+        # self.mozza.set_auto_params()
+        bytes_to_read = self.mozza.begin_acquisition()
+        raw = self.mozza.read_raw()
+        signal, reference = self.mozza.separate_sig_ref(raw)
+        self.mozza.end_acquisition()
+        spectrum = self.mozza.process_spectrum(sig_data=signal, ref_data=reference)
+        # wnums = np.arange(1e7 / 5000, 1e7 / 2000, 5)
+        return wnums, spectrum, signal, reference
 
     def update_plot(self):
         result = self.test_acquisition()
         if result:
             self.wnums, self.data, self.signal, self.reference = result
-            self.ax1.clear()
-            self.ax1.plot(self.wnums, self.data)
-            self.ax1.set_xlabel(r'wavenumber [cm$^{-1}$]')
-            self.ax1.set_ylabel(r'intensity [arb. units]')
-            self.ax1.grid()
 
             smean, sstd = np.mean(self.signal), np.std(self.signal)
             rmean, rstd = np.mean(self.reference), np.std(self.reference)
-            self.ax2.clear()
-            self.ax2.plot(self.signal, label=r'signal mean=%.0f$\pm$%.1f' % (smean, sstd))
-            self.ax2.plot(self.reference, label=r'reference mean=%.0f$\pm$%.1f' % (rmean, rstd))
-            self.ax2.set_xlabel('Sample index')
-            self.ax2.set_ylabel('Amplitude')
+
+            self.ax1.clear()  # Effacer le subplot 1 en premier
+            self.ax1.plot(self.signal, label=r'signal mean=%.0f$\pm$%.1f' % (smean, sstd))
+            self.ax1.plot(self.reference, label=r'reference mean=%.0f$\pm$%.1f' % (rmean, rstd))
+            # self.ax1.set_xlabel('Sample index')
+            self.ax1.set_ylabel('Amplitude')
+            self.ax1.grid()
+            self.ax1.legend()
+
+            self.ax2.clear()  # Effacer le subplot 2 en second
+            self.ax2.plot(self.wnums, self.data)
+            self.ax2.set_xlabel(r'wavelength [nm]')
+            self.ax2.set_ylabel(r'intensity [arb. units]')
             self.ax2.grid()
-            self.ax2.legend()
 
             self.canvas.draw()
 
     def update_spectro_gui(self):
         if not self.is_paused:
             self.update_plot()
-        self.master.after(3, self.update_spectro_gui)  # Actualiser toutes les 3 secondes
+        self.master.after(3, self.update_spectro_gui)
 
     def toggle_pause(self):
-        self.is_paused = not self.is_paused
-        if self.is_paused:
-            self.pause_button.config(text="Start", bg='#4CAF50')
+        if self.is_first_apply:  # Vérifier si Apply a été pressé pour la première fois
+            messagebox.showwarning("Attention", "Veuillez d'abord appliquer les paramètres.")
         else:
-            self.pause_button.config(text="Stop", bg='#F44336')
+            self.is_paused = not self.is_paused
+            if self.is_paused:
+                self.pause_button.config(text="Start", bg='#4CAF50')
+            else:
+                self.pause_button.config(text="Stop", bg='#F44336')
+
 
     def save_data(self, folder_name):
         if hasattr(self, 'wnums') and hasattr(self, 'data'):

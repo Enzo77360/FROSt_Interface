@@ -23,7 +23,13 @@ class MainApplication:
         resized_logo = original_logo.resize((120, 83), Image.BILINEAR)  # Redimensionner l'image à 80x60 pixels
         self.logo_image = ImageTk.PhotoImage(resized_logo)
         self.logo_label = tk.Label(self.master, image=self.logo_image)
-        self.logo_label.place(x=900, y=600)  # Placez le logo à la position (20, 20)
+        self.logo_label.place(x=950, y=600)
+
+        original_logo_alls = Image.open(r"C:\Users\enzos\OneDrive\Pictures\alls.png")  # Chemin réel de votre logo
+        resized_logo_alls = original_logo_alls.resize((200, 60), Image.BILINEAR)  # Redimensionner l'image à 80x60 pixels
+        self.logo_image_alls = ImageTk.PhotoImage(resized_logo_alls)
+        self.logo_label_alls = tk.Label(self.master, image=self.logo_image_alls)
+        self.logo_label_alls.place(x=700, y=620)
 
         # Créer une instance de MotorControllerGUI dans le frame de droite
         self.motor_controller = MotorControllerGUI(self.right_frame)

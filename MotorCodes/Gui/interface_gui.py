@@ -5,6 +5,8 @@ import threading
 import os
 from Traces.Trace_FROSt import HeatmapGUI
 from datetime import datetime
+from PIL import Image, ImageTk
+
 # Importer la classe SpectroGUI
 from SpectroCodes.Gui_Periodic_plot import SpectroGUI
 
@@ -34,6 +36,24 @@ class MotorControllerGUI:
         self.master.option_add('*TCombobox*Listbox.selectForeground', '#FFFFFF')
         self.master.option_add('*TCombobox*Listbox.selectBorderWidth', 0)
         self.master.option_add('*TCombobox.font', ('Segoe UI', 10))
+
+        # Charger les icônes
+
+        backward_icon = Image.open(r"C:\Users\enzos\OneDrive\Pictures\arrow_left.png")
+        forward_icon = Image.open(r"C:\Users\enzos\OneDrive\Pictures\arrow_right.png")
+        set_icon = Image.open(r"C:\Users\enzos\Downloads\icons8-accueil-20.png")
+        next_icon = Image.open(r"C:\Users\enzos\Downloads\icons8-carte-de-points-chauds-40.png")
+        go_icon = Image.open(r"C:\Users\enzos\Downloads\icons8-aller-25.png")
+        close_icon = Image.open(r"C:\Users\enzos\Downloads\icons8-fermer-25.png")
+
+
+        # Convertir les icônes en images compatibles avec Tkinter
+        self.backward_img = ImageTk.PhotoImage(backward_icon)
+        self.forward_img = ImageTk.PhotoImage(forward_icon)
+        self.set_img = ImageTk.PhotoImage(set_icon)
+        self.next_img = ImageTk.PhotoImage(next_icon)
+        self.go_img = ImageTk.PhotoImage(go_icon)
+        self.close_img = ImageTk.PhotoImage(close_icon)
 
         # Créer et placer les widgets dans la fenêtre
         self.create_widgets()
@@ -71,6 +91,7 @@ class MotorControllerGUI:
         self.label_step = tk.Label(frame_params, text="Step (fs):")
         self.label_step.pack(anchor="w")
         self.entry_step = tk.Entry(frame_params, textvariable=self.step)
+        self.entry_step.insert(0, "500")
         self.entry_step.pack(fill="x", pady=5)
 
         # Frame pour contenir les boutons Backward et Forward
@@ -78,8 +99,8 @@ class MotorControllerGUI:
         frame_buttons.pack(fill="x", padx=5, pady=5)
 
         # Ajouter les boutons Backward et Forward sous le bouton Initialiser
-        self.button_backward = tk.Button(frame_buttons, text="Backward", command=self.move_backward)
-        self.button_forward = tk.Button(frame_buttons, text="Forward", command=self.move_forward)
+        self.button_backward = tk.Button(frame_buttons,  image=self.backward_img, command=self.move_backward)
+        self.button_forward = tk.Button(frame_buttons, image=self.forward_img, command=self.move_forward)
 
         # Pack les boutons Backward et Forward sur la même ligne
         self.button_backward.pack(side="left", padx=5)
@@ -91,27 +112,28 @@ class MotorControllerGUI:
         self.label_current_position.pack(side="left", padx=5, pady=5)
 
         # Ajouter un bouton Set sous les boutons Backward et Forward
-        self.button_set = tk.Button(frame_buttons, text="Set", command=self.set_position_to_zero)
+        self.button_set = tk.Button(frame_buttons, image=self.set_img, command=self.set_position_to_zero)
         self.button_set.pack(side="left", padx=5, pady=5)
-
-
 
         # Libellé et champ de saisie pour la position de départ
         self.label_start = tk.Label(frame_params, text="Position de départ (fs):")
         self.label_start.pack(anchor="w")
         self.entry_start = tk.Entry(frame_params, textvariable=self.start_position)
+        # self.entry_start.insert(0, "-500")
         self.entry_start.pack(fill="x", pady=5)
 
         # Libellé et champ de saisie pour la position de fin
         self.label_end = tk.Label(frame_params, text="Position de fin (fs):")
         self.label_end.pack(anchor="w")
         self.entry_end = tk.Entry(frame_params, textvariable=self.end_position)
+        # self.entry_end.insert(0, "500")
         self.entry_end.pack(fill="x", pady=5)
 
         # Libellé et champ de saisie pour la taille des étapes
         self.label_step_size = tk.Label(frame_params, text="Taille des étapes (fs):")
         self.label_step_size.pack(anchor="w")
         self.entry_step_size = tk.Entry(frame_params, textvariable=self.step_size)
+        # self.entry_step_size.insert(0, "100")
         self.entry_step_size.pack(fill="x", pady=5)
 
         # Ajouter les traces pour valider automatiquement les entrées
@@ -125,20 +147,23 @@ class MotorControllerGUI:
         frame_actions.pack(padx=5, pady=5, fill="x")
 
         # Bouton pour démarrer le déplacement
-        self.button_move = tk.Button(frame_actions, text="Déplacer", command=self.start_movement)
+        self.button_move = tk.Button(frame_actions, image=self.go_img, command=self.start_movement)
         self.button_move.pack(side="left", padx=5, pady=5)
 
         # Bouton pour quitter
-        self.button_quit = tk.Button(frame_actions, text="Quitter", command=self.quit_program)
+        self.button_quit = tk.Button(frame_actions, image=self.close_img, command=self.quit_program)
         self.button_quit.pack(side="left", padx=5, pady=5)
 
         # Créer le bouton "Next" en bas à droite
-        self.next_button = tk.Button(self.master, text="   Next   ", command=self.create_heatmap_gui)
+        self.next_button = tk.Button(self.master, image = self.next_img, command=self.create_heatmap_gui)
         self.next_button.pack(side="right", padx=5, pady=5)
+
+
 
         # Fonction pour mettre à jour l'affichage de la position actuelle à 0.00 fs
     def set_position_to_zero(self):
         self.label_current_position.config(text="Position actuelle (fs): 0.00")
+
 
     def update_position_labels(self):
         current_fs = self.current_position / (C_MM_PER_FS / 2)
