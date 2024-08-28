@@ -28,18 +28,6 @@ Pour configurer et utiliser cette interface, suivez les étapes ci-dessous :
 
 3. **Installez les dépendances :**
 
-   Assurez-vous que `pip` est à jour :
-
-   ```bash
-   pip install --upgrade pip
-   ```
-
-   Installez les packages requis :
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
    Note : Vous devrez également installer les DLLs et bibliothèques spécifiques pour le moteur KDC101 et le spectromètre Mozza. Reportez-vous aux documents fournis par Thorlabs et Fastlite pour les instructions détaillées.
 
 4. **Installez les bibliothèques supplémentaires :**
