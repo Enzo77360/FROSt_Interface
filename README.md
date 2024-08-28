@@ -1,36 +1,21 @@
-# MoteurThorlabsKinesis
+# Interface pour l'Acquisition de Traces FROSt
 
-Repository créé par Enzo Sebiane pour le contrôle des moteurs Thorlabs à l'aide de l'API Kinesis.
+Ce projet fournit une interface graphique pour l'acquisition de traces FROSt, intégrant le contrôle du moteur KDC101 de Thorlabs et du spectromètre Mozza de Fastlite.
 
-## Auteurs
+## Interface Finale
 
-- Enzo Sebiane
+L'interface permet de contrôler le moteur et d'acquérir les spectres en synchronisation. Voici à quoi elle ressemble :
 
-## Contenu
+![Interface FROSt](images/interface_frost.png)
 
-Ce repository contient les scripts Python pour contrôler les moteurs Thorlabs à l'aide de l'API Kinesis.
+## Installation
 
-### Codes Principaux
-
-1. **MoteurMvtContinu.py**
-   - Ce script permet de contrôler le mouvement continu du moteur en spécifiant une vitesse et une direction.
-
-2. **MvtMoteurPas_Pas.py**
-   - Ce script permet de contrôler le mouvement du moteur pas à pas en spécifiant la distance de chaque pas, le nombre total de pas, et le temps de pause entre chaque pas.
-
-## Prérequis
-
-- Python 3.x
-- Bibliothèques Python : `clr`, `System`, `Thorlabs.MotionControl.DeviceManagerCLI`, `Thorlabs.MotionControl.KCube.DCServoCLI`
+Pour configurer et utiliser cette interface, suivez les instructions de configuration des modules et l'installation des dépendances requises.
 
 ## Utilisation
 
-1. Assurez-vous d'avoir installé Python 3.x sur votre système.
-2. Installez les bibliothèques requises en exécutant `pip install clr`.
-3. Téléchargez et installez les pilotes Thorlabs Kinesis sur votre système.
-4. Exécutez les scripts Python dans le dossier `codespy` pour contrôler les moteurs Thorlabs.
+Consultez la documentation pour des instructions détaillées sur l'utilisation de l'interface et le contrôle des équipements.
 
-## Licence
+## Références
 
- - voir le fichier [LICENSE.md](LICENSE.md) pour plus de détails.
-
+- [GitHub du Projet](https://github.com/Enzo77360/FROSt_Interface)
